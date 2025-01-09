@@ -4,17 +4,15 @@
 
 package frc.robot.utils;
 
-import com.revrobotics.CANSparkBase.IdleMode;
+
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.measure.Unit;
-
 import java.util.Map;
-
+//import edu.wpi.first.math.measure.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -171,8 +169,8 @@ public final class Constants {
     public static final double kTurningMinOutput = -1;
     public static final double kTurningMaxOutput = 1;
 
-    public static final IdleMode kDrivingMotorIdleMode = IdleMode.kCoast;
-    public static final IdleMode kTurningMotorIdleMode = IdleMode.kCoast;
+    //public static final IdleMode kDrivingMotorIdleMode = IdleMode.kCoast;
+    //public static final IdleMode kTurningMotorIdleMode = IdleMode.kCoast;
 
     public static final int kDrivingMotorCurrentLimit = 50; // amps
     public static final int kTurningMotorCurrentLimit = 20; // amps
