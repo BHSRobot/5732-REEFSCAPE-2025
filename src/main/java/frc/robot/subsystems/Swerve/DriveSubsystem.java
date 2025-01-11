@@ -16,17 +16,18 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.util.WPIUtilJNI;
 import edu.wpi.first.wpilibj.DriverStation;
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.LoggedRobot;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
-//TODO find replacements (if applicable)
+
 
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-// import com.pathplanner.lib.controllers.PathFollowingController;
+import com.pathplanner.lib.controllers.PathFollowingController;
 
 import frc.robot.utils.SwerveUtils;
 import frc.robot.utils.Constants.DriveConstants;
@@ -139,12 +140,12 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearLeft.getPosition(),
             m_rearRight.getPosition()
         });
-    // Logger.recordOutput("Gyro Angle", m_gyro.getAngle());
-    // Logger.recordOutput("Pose2d", m_odometry.getPoseMeters());
-    // Logger.recordOutput("SwerveModuleStates", getModuleStates());
-    // Logger.recordOutput("Speed", getRobotRelativeSpeeds());
-    // Logger.recordOutput("Robot Heading", getHeading());
-    // Logger.recordOutput("Limelight TY", table.getEntry("ty").getDouble(0.0));
+    Logger.recordOutput("Gyro Angle", m_gyro.getYaw().getValueAsDouble());
+    Logger.recordOutput("Pose2d", m_odometry.getPoseMeters());
+    Logger.recordOutput("SwerveModuleStates", getModuleStates());
+    Logger.recordOutput("Speed", getRobotRelativeSpeeds());
+    Logger.recordOutput("Robot Heading", getHeading());
+    Logger.recordOutput("Limelight TY", table.getEntry("ty").getDouble(0.0));
   }
 
   /**
