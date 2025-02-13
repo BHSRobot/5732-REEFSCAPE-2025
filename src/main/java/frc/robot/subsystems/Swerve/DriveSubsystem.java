@@ -87,7 +87,7 @@ public class DriveSubsystem extends SubsystemBase {
     
     RobotConfig config;
     try{
-      config = RobotConfig.fromGUISettings();
+    config = RobotConfig.fromGUISettings();
       // Configure AutoBuilder last
       AutoBuilder.configure(
             this::getPose, // Robot pose supplier
@@ -116,7 +116,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     } catch (Exception e) {
       // Handle exception as needed
-      e.printStackTrace();
+        e.printStackTrace();
     }
 
     table = NetworkTableInstance.getDefault().getTable("limelight");
@@ -278,6 +278,9 @@ public class DriveSubsystem extends SubsystemBase {
     m_rearLeft.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(-45)));
     m_rearRight.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)));
   }
+
+  
+
 
   public void stopModules() {
     m_frontLeft.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(0)));

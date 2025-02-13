@@ -54,6 +54,7 @@ public class RobotContainer {
   // Controllers
   CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
   CommandPS5Controller m_altdriverController = new CommandPS5Controller(OIConstants.kDriverControllerPort);
+  CommandXboxController m_OpController = new CommandXboxController(OIConstants.kOperatorControllerPort);
   private Autos auto;
 
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -87,7 +88,7 @@ public class RobotContainer {
   }
 
   public void configureNamedCommands() {
-
+    
   }
 
   public Command getAutonomousCommand() {
