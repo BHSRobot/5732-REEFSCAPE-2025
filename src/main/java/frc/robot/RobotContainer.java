@@ -23,13 +23,15 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 //import frc.robot.commands.AimWithLimelight;
-import frc.robot.Commands.Autos;
+//import frc.robot.Commands.Autos;
 //import frc.robot.commands.ScoringPositions;
 import frc.robot.subsystems.Swerve.DriveSubsystem;
+import frc.robot.subsystems.VortexPID.vortex;
 import frc.robot.utils.LimeHelp;
 import frc.robot.utils.Constants.AutoConstants;
 import frc.robot.utils.Constants.DriveConstants;
 import frc.robot.utils.Constants.OIConstants;
+import frc.robot.utils.Constants.MechConstants;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
@@ -51,11 +53,12 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 public class RobotContainer {
   // Robot Subsystems
   public final static DriveSubsystem m_robotDrive = new DriveSubsystem();
+  public final static vortex m_vortex = new vortex();
   // Controllers
   CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
   CommandPS5Controller m_altdriverController = new CommandPS5Controller(OIConstants.kDriverControllerPort);
   CommandXboxController m_OpController = new CommandXboxController(OIConstants.kOperatorControllerPort);
-  private Autos auto;
+  //private Autos auto;
 
   private final LoggedDashboardChooser<Command> autoChooser;
 
@@ -77,14 +80,15 @@ public class RobotContainer {
       configureNamedCommands();
 
     autoChooser = new LoggedDashboardChooser<>("AutoChooser", AutoBuilder.buildAutoChooser());
-    auto = new Autos();
+    //auto = new Autos();
   }
 
   
 
 
   private void configureBindings() {
-
+    m_driverController.a().onTrue(new InstantCommand(() -> m_vortex.useOutput(MechConstants.vsetpoint)));
+    m_driverController.b().onTrue(new InstantCommand(() -> m_vortex.stop()));
   }
 
   public void configureNamedCommands() {

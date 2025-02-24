@@ -58,8 +58,11 @@ public final class Configs {
         public static final SparkMaxConfig elevLeadConfig = new SparkMaxConfig();
         public static final SparkMaxConfig elevTwoConfig = new SparkMaxConfig();
         static {
-           elevTwoConfig
-            .follow(Constants.MechConstants.kElevExtIDOne);
+           //elevTwoConfig
+            //.follow(Constants.MechConstants.kElevLeadID);
+            //elevLeadConfig.absoluteEncoder
+                //.positionConversionFactor(Constants.MechConstants.kElevLenConversionFactor);
+
             
             
 
@@ -68,7 +71,16 @@ public final class Configs {
     }
 
 
+
     public static final class IntakeConfigs {
 
+    }
+
+
+    public static final class vortexConfigs {
+        public static final SparkMaxConfig m_vortexConf= new SparkMaxConfig();
+        static {
+            
+        }
     }
 }

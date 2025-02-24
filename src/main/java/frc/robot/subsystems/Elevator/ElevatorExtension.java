@@ -21,17 +21,22 @@ public class ElevatorExtension extends SubsystemBase {
     private ProfiledPIDController m_elevPid;
 
     public ElevatorExtension() {
-        m_elevOne = new SparkMax(MechConstants.kElevExtIDOne, MotorType.kBrushless);
-        m_elevTwo = new SparkMax(MechConstants.kElevExtIDTwo, MotorType.kBrushless);
+        //m_elevOne = new SparkMax(MechConstants.kElevLeadID, MotorType.kBrushless);
+        //m_elevTwo = new SparkMax(MechConstants.kElevTwoID, MotorType.kBrushless);
         
         m_elevPid = new ProfiledPIDController (
                     MechConstants.kPElevLen,
                     MechConstants.kIElevLen,
                     MechConstants.kDElevLen,
-                    new TrapezoidProfile.Constraints(0,0)
+                    new TrapezoidProfile.Constraints(MechConstants.kElevMaxVel, MechConstants.kElevMaxAccel)
                 );
+
+        
         
     }
+
+
+    
     
 
     
@@ -45,12 +50,12 @@ public class ElevatorExtension extends SubsystemBase {
       // Add the feedforward to the PID output to get the motor output
       if (getMeasurement() >= 1.25) {
         m_elevOne.set(0);
-        m_elevTwo.set(0);
+        
       }
       
       else {
         m_elevOne.set(output);
-        m_elevTwo.set(output);
+        
       }
       
     }
