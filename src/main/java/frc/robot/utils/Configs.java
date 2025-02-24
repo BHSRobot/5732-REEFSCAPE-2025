@@ -1,6 +1,7 @@
 package frc.robot.utils;
 
 import com.revrobotics.spark.config.SparkMaxConfig;
+
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 
 import frc.robot.utils.Constants.ModuleConstants;
@@ -46,17 +47,28 @@ public final class Configs {
                     // longer route.
                     .positionWrappingEnabled(true)
                     .positionWrappingInputRange(ModuleConstants.kTurningEncoderPositionPIDMinInput, ModuleConstants.kTurningEncoderPositionPIDMaxInput);
-                vortexConfig
-                    .idleMode(IdleMode.kBrake);
-
-                vortexConfig.closedLoop
-                    .pid(0.001,0,0)
-                    .positionWrappingEnabled(true)
-                    .feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
-                    
+                
+            }
+    }
 
 
-                    
+
+
+    public static final class ElevatorConfigs {
+        public static final SparkMaxConfig elevLeadConfig = new SparkMaxConfig();
+        public static final SparkMaxConfig elevTwoConfig = new SparkMaxConfig();
+        static {
+           elevTwoConfig
+            .follow(Constants.MechConstants.kElevExtIDOne);
+            
+            
+
         }
+        
+    }
+
+
+    public static final class IntakeConfigs {
+
     }
 }

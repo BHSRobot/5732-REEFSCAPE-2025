@@ -23,7 +23,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 //import frc.robot.commands.AimWithLimelight;
-import frc.robot.commands.Autos;
+import frc.robot.Commands.Autos;
 //import frc.robot.commands.ScoringPositions;
 import frc.robot.subsystems.Swerve.DriveSubsystem;
 import frc.robot.utils.LimeHelp;

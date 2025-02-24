@@ -31,10 +31,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 public final class Constants {
   public static final class MechConstants {
 
-    //Elevator PID
-    public static final double kPElevAngle = 0.025;
-    public static final double kIElevAngle = 0.0;
-    public static final double kDElevAngle = 0.0;
+    
 
     //Wrist Pivot PID
     public static final double kPWristAngle = 0.4;
@@ -47,16 +44,8 @@ public final class Constants {
     public static final double kDElevLen = 0;
 
     public static final double kElevLenConversionFactor = (2 * Math.PI / 20) / 12;
-    public static final double kElevAngleConversionFactor = 360 / 108;  // gear ratio 108
     public static final double kWristAngleConversionFactor = 360 / 40; //gear ratio 40
 
-    public static final double kElevAngleMaxVelocity = 6;
-    public static final double kElevAngleMaxAcceleration = 1.5;
-
-    //Elevator Pivot Feedforward
-    public static final double kGElevAng = 1.15;
-    public static final double kVElevAng = 1.8;
-    public static final double kAElevAng = 0.06;
 
     //Elevator Extension Feedforward
     public static final double kSElevExt = 0.32;
@@ -70,8 +59,8 @@ public final class Constants {
     public static final double kAWrist = 0.03;
 
     //CAN Spark ID's
-    public static final int kElevPivID = 12;
-    public static final int kElevExtID = 13;
+    public static final int kElevExtIDOne = 13;
+    public static final int kElevExtIDTwo = 14;
 
     public static final int kWristPivID = 14;
     public static final int kWristNEOTopID = 15;
@@ -85,6 +74,7 @@ public final class Constants {
     public static final double kWristAngleOffest = 1.5;
     public static final double kElevatorOffset = 0.05;
   }
+  
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
