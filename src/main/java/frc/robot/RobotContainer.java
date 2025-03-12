@@ -26,7 +26,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 //import frc.robot.Commands.Autos;
 //import frc.robot.commands.ScoringPositions;
 import frc.robot.subsystems.Swerve.DriveSubsystem;
-import frc.robot.subsystems.VortexPID.vortex;
+
+import frc.robot.subsystems.Intake.Intake;
 import frc.robot.utils.LimeHelp;
 import frc.robot.utils.Constants.AutoConstants;
 import frc.robot.utils.Constants.DriveConstants;
@@ -53,7 +54,7 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 public class RobotContainer {
   // Robot Subsystems
   public final static DriveSubsystem m_robotDrive = new DriveSubsystem();
-  public final static vortex m_vortex = new vortex();
+  public final static Intake m_Intake = new Intake();
   // Controllers
   CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
   CommandPS5Controller m_altdriverController = new CommandPS5Controller(OIConstants.kDriverControllerPort);
@@ -87,8 +88,9 @@ public class RobotContainer {
 
 
   private void configureBindings() {
-    m_driverController.a().onTrue(new InstantCommand(() -> m_vortex.useOutput(MechConstants.vsetpoint)));
-    m_driverController.b().onTrue(new InstantCommand(() -> m_vortex.stop()));
+    m_driverController.rightTrigger().
+      onTrue(m_Intake.ejectCommand())
+      .onFalse(m_Intake.disabledCommand());
   }
 
   public void configureNamedCommands() {

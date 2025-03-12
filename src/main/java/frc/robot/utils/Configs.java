@@ -73,14 +73,13 @@ public final class Configs {
 
 
     public static final class IntakeConfigs {
-
-    }
-
-
-    public static final class vortexConfigs {
-        public static final SparkMaxConfig m_vortexConf= new SparkMaxConfig();
+        public static final SparkMaxConfig intakeConfig = new SparkMaxConfig();
         static {
-            
+            intakeConfig
+                .idleMode(IdleMode.kBrake);
         }
     }
+
+
+    
 }

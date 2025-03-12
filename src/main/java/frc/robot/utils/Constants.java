@@ -33,7 +33,7 @@ public final class Constants {
     
     //vortex setpoint in degrees
 
-    public static final double vsetpoint = 45; 
+    public static final double vsetpoint = 180; 
 
     //Wrist Pivot PID
     public static final double kPWristAngle = 0.4;
