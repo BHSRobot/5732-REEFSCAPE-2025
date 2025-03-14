@@ -88,7 +88,7 @@ public class RobotContainer {
 
 
   private void configureBindings() {
-    m_driverController.rightTrigger().
+    m_OpController.rightTrigger().
       onTrue(m_Intake.ejectCommand())
       .onFalse(m_Intake.disabledCommand());
   }
