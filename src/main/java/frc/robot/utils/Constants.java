@@ -31,9 +31,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 public final class Constants {
   public static final class MechConstants {
     
-    //vortex setpoint in degrees
-
-    public static final double vsetpoint = 180; 
+    
 
     //Wrist Pivot PID
     public static final double kPWristAngle = 0.4;
@@ -74,9 +72,9 @@ public final class Constants {
     public static final int kWristPivID = 14;
     
 
-    public static final int kIntakeID = 17;
+    public static final int kIntakeID = 8;
 
-    public static final int kIndexerID = 18;
+    
 
     //Offsets
     public static final double kWristAngleOffest = 1.5;
