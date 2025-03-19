@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.MatchType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.utils.Constants;
@@ -13,6 +15,8 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+
+import com.pathplanner.lib.commands.FollowPathCommand;
 
 
 /**
@@ -31,6 +35,7 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void robotInit() {
+      FollowPathCommand.warmupCommand().schedule();
      // Set up data receivers & replay source
      switch (Constants.currentMode) {
        case REAL:
@@ -69,11 +74,15 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void robotPeriodic() {
+    
+    
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run(); 
+    //m_frontRight.m_drivingSpark.setInverted(true);
+    //m_rearLeft.m_drivingSpark.setInverted(true);
   }
 
   /** This function is called once each time the robot enters Disabled mode. */

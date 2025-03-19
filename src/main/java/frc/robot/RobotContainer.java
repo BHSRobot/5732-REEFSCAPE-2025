@@ -16,6 +16,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.MatchType;
 import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
@@ -50,6 +51,8 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.events.EventTrigger;
+import com.pathplanner.lib.path.PathPlannerPath;
 
 public class RobotContainer {
   // Robot Subsystems
@@ -74,31 +77,66 @@ public class RobotContainer {
           () -> m_robotDrive.drive(
               -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
               -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
-              -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
+              -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband)
+              ,
               true, false),
+
           m_robotDrive));
 
       configureNamedCommands();
 
     autoChooser = new LoggedDashboardChooser<>("AutoChooser", AutoBuilder.buildAutoChooser());
     //auto = new Autos();
+    new EventTrigger("Run Eject").onTrue(Commands.print("Eject Ran"));
   }
 
   
 
 
   private void configureBindings() {
+           
+    
     m_OpController.rightTrigger().
       onTrue(m_Intake.ejectCommand())
       .onFalse(m_Intake.disabledCommand());
-  }
 
-  public void configureNamedCommands() {
+    m_driverController.a().onTrue(
+      new InstantCommand(() -> m_robotDrive.zeroHeading(), m_robotDrive) );
     
   }
 
+  public void configureNamedCommands() {
+    NamedCommands.registerCommand("score L1",  m_Intake.ejectCommand());
+  }
+
+  
+
   public Command getAutonomousCommand() {
-    return Commands.print("No autonomous command configured");
+
+    try{
+      // Load the path you want to follow using its name in the GUI
+      PathPlannerPath path = PathPlannerPath.fromPathFile("ScoreMid");
+
+      // Create a path following command using AutoBuilder. This will also trigger event markers.
+      return AutoBuilder.followPath(path);
+    } catch (Exception e) {
+      DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
+      return Commands.none();
+  }
+
+    /*return new RunCommand(() -> m_robotDrive.drive(
+        0.25,
+        0,
+        0,
+        false,
+        false
+    ), m_robotDrive).withTimeout(1.5).andThen(new InstantCommand(() -> m_robotDrive.drive(0,
+       0,
+       0,
+       false,
+       false)));*/
+    //return Commands.print("No autonomous command configured");
+
   }
 
 

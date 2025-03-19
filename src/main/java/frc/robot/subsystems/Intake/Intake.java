@@ -1,12 +1,16 @@
 package frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Intake.Intake.IntakeState;
 import frc.robot.utils.Constants.MechConstants;
+
+import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utils.Constants.MechConstants;
+import frc.robot.utils.Configs.IntakeConfigs;;
 
 public class Intake extends SubsystemBase {
     private IntakeState iState = IntakeState.DISABLED;
@@ -14,6 +18,7 @@ public class Intake extends SubsystemBase {
 
     public Intake() {
         intakeNeo = new SparkMax(MechConstants.kIntakeID, MotorType.kBrushless);
+        intakeNeo.configure(IntakeConfigs.intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     public enum IntakeState {
@@ -22,13 +27,13 @@ public class Intake extends SubsystemBase {
     }
 
     public void periodic() {
-      //Roller moves 4 times as fast as chamber
+      
       switch (iState) {
           case DISABLED:
               intakeNeo.set(0);
               break;
           case EJECTING:
-              intakeNeo.set(1);
+              intakeNeo.set(.4);
               break;
         }
     }
