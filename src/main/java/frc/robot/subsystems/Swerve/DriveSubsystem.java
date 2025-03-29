@@ -33,6 +33,8 @@ import frc.robot.utils.SwerveUtils;
 import frc.robot.utils.Constants.DriveConstants;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 
 public class DriveSubsystem extends SubsystemBase {
   // Create MAXSwerveModules
@@ -97,7 +99,7 @@ public class DriveSubsystem extends SubsystemBase {
             this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
             new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
                     new PIDConstants(1.0, 0.0, 0.0), // Translation PID constants
-                    new PIDConstants(4.5, 0.0, 0.0) // Rotation PID constants
+                    new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
             ),
             config, // The robot configuration
             () -> {
@@ -328,8 +330,15 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   /** Zeroes the heading of the robot. */
-  public void zeroHeading() {
-    m_gyro.reset();
+  public void zeroHeading( ) {
+    if (DriverStation.getAlliance().isPresent()) {
+      if (DriverStation.getAlliance().get()==DriverStation.Alliance.Blue) {
+        m_gyro.setYaw(90);
+      }
+     else {
+        m_gyro.setYaw(-90);
+      }
+     }
   }
 
   /**
@@ -349,4 +358,16 @@ public class DriveSubsystem extends SubsystemBase {
   public double getTurnRate() {
     return m_gyro.getAngularVelocityZWorld().getValueAsDouble() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
   }
+
+  public void voltageDrive(double voltage) {
+    
+      // applies raw voltage to moving sparks to move bot forward
+      m_frontLeft.m_drivingSpark.setVoltage(voltage);
+      m_frontRight.m_drivingSpark.setVoltage(voltage);
+      m_rearLeft.m_drivingSpark.setVoltage(voltage);
+      m_rearRight.m_drivingSpark.setVoltage(voltage);
+  }
+
+
+
 }

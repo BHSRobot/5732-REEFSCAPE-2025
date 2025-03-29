@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 //import frc.robot.commands.AimWithLimelight;
 //import frc.robot.Commands.Autos;
 //import frc.robot.commands.ScoringPositions;
@@ -44,6 +45,8 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Supplier;
@@ -59,9 +62,9 @@ public class RobotContainer {
   public final static DriveSubsystem m_robotDrive = new DriveSubsystem();
   public final static Intake m_Intake = new Intake();
   // Controllers
-  CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
-  CommandPS5Controller m_altdriverController = new CommandPS5Controller(OIConstants.kDriverControllerPort);
-  CommandXboxController m_OpController = new CommandXboxController(OIConstants.kOperatorControllerPort);
+  public static final CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
+  public static final CommandPS5Controller m_altdriverController = new CommandPS5Controller(OIConstants.kDriverControllerPort);
+  public static final CommandXboxController m_OpController = new CommandXboxController(OIConstants.kOperatorControllerPort);
   //private Autos auto;
 
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -75,8 +78,8 @@ public class RobotContainer {
       // Turning is controlled by the X axis of the right stick.
       new RunCommand(
           () -> m_robotDrive.drive(
+              -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband)*-1,
               -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
-              -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
               -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband)
               ,
               true, false),
@@ -100,6 +103,10 @@ public class RobotContainer {
       onTrue(m_Intake.ejectCommand())
       .onFalse(m_Intake.disabledCommand());
 
+    /*m_driverController.rightTrigger().
+      onTrue(m_Intake.ejectCommand()).
+      onFalse(m_Intake.disabledCommand());
+    */
     m_driverController.a().onTrue(
       new InstantCommand(() -> m_robotDrive.zeroHeading(), m_robotDrive) );
     
@@ -113,19 +120,19 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
 
-    try{
+    /*try{
       // Load the path you want to follow using its name in the GUI
-      PathPlannerPath path = PathPlannerPath.fromPathFile("ScoreMid");
+      PathPlannerPath path = PathPlannerPath.fromPathFile("New Path");
 
       // Create a path following command using AutoBuilder. This will also trigger event markers.
       return AutoBuilder.followPath(path);
     } catch (Exception e) {
       DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
       return Commands.none();
-  }
+  }*/
 
-    /*return new RunCommand(() -> m_robotDrive.drive(
-        0.25,
+    return new RunCommand(() -> m_robotDrive.drive(
+        -0.4,
         0,
         0,
         false,
@@ -134,7 +141,7 @@ public class RobotContainer {
        0,
        0,
        false,
-       false)));*/
+       false)));
     //return Commands.print("No autonomous command configured");
 
   }
@@ -156,7 +163,6 @@ public class RobotContainer {
       }
     );
     
-    CameraServer.startAutomaticCapture();
     CameraServer.startAutomaticCapture();
   }
 
