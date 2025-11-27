@@ -4,93 +4,80 @@
 
 package frc.robot;
 
+import java.io.File;
+
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.events.EventTrigger;
+import com.pathplanner.lib.path.PathPlannerPath;
+
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.MatchType;
-import edu.wpi.first.wpilibj.PS4Controller;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.subsystems.Intake.Intake;
 //import frc.robot.commands.AimWithLimelight;
 //import frc.robot.Commands.Autos;
 //import frc.robot.commands.ScoringPositions;
 import frc.robot.subsystems.Swerve.DriveSubsystem;
-
-import frc.robot.subsystems.Intake.Intake;
-import frc.robot.utils.LimeHelp;
-import frc.robot.utils.Constants.AutoConstants;
-import frc.robot.utils.Constants.DriveConstants;
+import frc.robot.subsystems.Swerve.SwerveSubsystem;
 import frc.robot.utils.Constants.OIConstants;
-import frc.robot.utils.Constants.MechConstants;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import swervelib.SwerveInputStream;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.function.Supplier;
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.pathplanner.lib.events.EventTrigger;
-import com.pathplanner.lib.path.PathPlannerPath;
 
 public class RobotContainer {
   // Robot Subsystems
   public final static DriveSubsystem m_robotDrive = new DriveSubsystem();
+  private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/"));
   public final static Intake m_Intake = new Intake();
   // Controllers
   public static final CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
   public static final CommandPS5Controller m_altdriverController = new CommandPS5Controller(OIConstants.kDriverControllerPort);
-  public static final CommandXboxController m_OpController = new CommandXboxController(OIConstants.kOperatorControllerPort);
+  public static final CommandXboxController m_opController = new CommandXboxController(OIConstants.kOperatorControllerPort);
   //private Autos auto;
 
   private final LoggedDashboardChooser<Command> autoChooser;
 
   //private Autos auto;
 
+  // Handles controller inputs and uses it for angular velocity and angle of robot
+  SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
+                                                                () -> m_driverController.getLeftY() * -1,
+                                                                () -> m_driverController.getLeftX() * -1)
+                                                                .withControllerRotationAxis(m_driverController::getRightX)
+                                                                .deadband(OIConstants.kDriveDeadband)
+                                                                .scaleTranslation(0.8)
+                                                                .allianceRelativeControl(true);
+
+  SwerveInputStream driveDirectAngle = driveAngularVelocity.copy().withControllerHeadingAxis(m_driverController::getRightX, 
+                                                                                             m_driverController::getRightY)
+                                                                                             .headingWhile(true);
+
+  // Defines field oriented drive commands for robot 
+
+  Command fieldOrientedAngVelCmd = drivebase.driveFieldOriented(driveAngularVelocity);
+  Command fieldOrientedAngCmd = drivebase.driveFieldOriented(driveDirectAngle);
+
+                                                                                             
+                                                                                    
   public RobotContainer() {
     configureBindings();
-    m_robotDrive.setDefaultCommand(
-      // The left stick controls translation of the robot.
-      // Turning is controlled by the X axis of the right stick.
-      new RunCommand(
-          () -> m_robotDrive.drive(
-              -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband)*-1,
-              -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
-              -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband)
-              ,
-              true, false),
-
-          m_robotDrive));
-
-      configureNamedCommands();
+    configureNamedCommands();
 
     autoChooser = new LoggedDashboardChooser<>("AutoChooser", AutoBuilder.buildAutoChooser());
     //auto = new Autos();
     new EventTrigger("Run Eject").onTrue(Commands.print("Eject Ran"));
+    drivebase.setDefaultCommand(fieldOrientedAngVelCmd);
   }
 
   
@@ -99,7 +86,7 @@ public class RobotContainer {
   private void configureBindings() {
            
     
-    m_OpController.rightTrigger().
+    m_opController.rightTrigger().
       onTrue(m_Intake.ejectCommand())
       .onFalse(m_Intake.disabledCommand());
 
@@ -120,7 +107,7 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
 
-    /*try{
+      try{
       // Load the path you want to follow using its name in the GUI
       PathPlannerPath path = PathPlannerPath.fromPathFile("New Path");
 
@@ -129,19 +116,9 @@ public class RobotContainer {
     } catch (Exception e) {
       DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
       return Commands.none();
-  }*/
+  }
 
-    return new RunCommand(() -> m_robotDrive.drive(
-        -0.4,
-        0,
-        0,
-        false,
-        false
-    ), m_robotDrive).withTimeout(1.5).andThen(new InstantCommand(() -> m_robotDrive.drive(0,
-       0,
-       0,
-       false,
-       false)));
+    
     //return Commands.print("No autonomous command configured");
 
   }
