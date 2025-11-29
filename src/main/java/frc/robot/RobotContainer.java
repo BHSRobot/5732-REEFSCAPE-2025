@@ -5,12 +5,12 @@
 package frc.robot;
 
 import java.io.File;
+import java.util.function.BooleanSupplier;
 
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.events.EventTrigger;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.cameraserver.CameraServer;
@@ -22,20 +22,29 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.Intake.Intake;
+import com.pathplanner.lib.events.EventTrigger;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.math.geometry.Translation2d;
+
 //import frc.robot.commands.AimWithLimelight;
 //import frc.robot.Commands.Autos;
 //import frc.robot.commands.ScoringPositions;
 
 import frc.robot.subsystems.Swerve.SwerveSubsystem;
 import frc.robot.utils.Constants.OIConstants;
+import frc.robot.utils.Constants.DriveConstants;
 import swervelib.SwerveInputStream;
 
 
 public class RobotContainer {
+  // field relative val 
+  private static boolean fieldRelative = true;
+  // field relative supplier
+  private static BooleanSupplier fieldRelativeSupp = () -> fieldRelative;
   // Robot Subsystems
   private final SwerveSubsystem m_driveBase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve/"));
   public final static Intake m_Intake = new Intake();
@@ -43,6 +52,7 @@ public class RobotContainer {
   public static final CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
   public static final CommandPS5Controller m_altdriverController = new CommandPS5Controller(OIConstants.kDriverControllerPort);
   public static final CommandXboxController m_opController = new CommandXboxController(OIConstants.kOperatorControllerPort);
+  
   //private Autos auto;
 
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -64,26 +74,46 @@ public class RobotContainer {
 
   // Defines field oriented drive commands for robot 
 
-  Command fieldOrientedAngVelCmd = m_driveBase.driveFieldOriented(driveAngularVelocity);
-  Command fieldOrientedAngCmd = m_driveBase.driveFieldOriented(driveDirectAngle);
+  
+  
+
+  
+
+  
 
                                                                                              
                                                                                     
   public RobotContainer() {
     configureBindings();
     configureNamedCommands();
+    
 
     autoChooser = new LoggedDashboardChooser<>("AutoChooser", AutoBuilder.buildAutoChooser());
     //auto = new Autos();
     new EventTrigger("Run Eject").onTrue(Commands.print("Eject Ran"));
-    m_driveBase.setDefaultCommand(fieldOrientedAngVelCmd);
+
+    m_driveBase.setDefaultCommand(
+      new RunCommand(
+          () -> m_driveBase.drive(
+              new Translation2d(
+                -m_driverController.getLeftX() * DriveConstants.kMaxSpeedMetersPerSecond, 
+                -m_driverController.getLeftY() * DriveConstants.kMaxSpeedMetersPerSecond
+              ),      
+              m_driverController.getRightX() * DriveConstants.kMaxAngularSpeed,       
+              fieldRelativeSupp.getAsBoolean()
+          ),
+          m_driveBase
+      ));
   }
+         
 
   
 
 
   private void configureBindings() {
-           
+    // creates a trigger for quick field/robot relative control switching
+    new Trigger(m_driverController.povUp()).
+                onTrue(new InstantCommand(() -> fieldRelative = !fieldRelative));      
     
     m_opController.rightTrigger().
       onTrue(m_Intake.ejectCommand())
@@ -106,6 +136,7 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
 
+      
       try{
       // Load the path you want to follow using its name in the GUI
       PathPlannerPath path = PathPlannerPath.fromPathFile("New Path");
@@ -116,7 +147,9 @@ public class RobotContainer {
       DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
       return Commands.none();
   }
+  
 
+    
     
     //return Commands.print("No autonomous command configured");
 
