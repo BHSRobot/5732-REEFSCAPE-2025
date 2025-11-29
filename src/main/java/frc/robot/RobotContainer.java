@@ -13,8 +13,18 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.events.EventTrigger;
 import com.pathplanner.lib.path.PathPlannerPath;
 
+import java.io.File;
+
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.events.EventTrigger;
+import com.pathplanner.lib.path.PathPlannerPath;
+
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -43,6 +53,7 @@ public class RobotContainer {
   public static final CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
   public static final CommandPS5Controller m_altdriverController = new CommandPS5Controller(OIConstants.kDriverControllerPort);
   public static final CommandXboxController m_opController = new CommandXboxController(OIConstants.kOperatorControllerPort);
+  
   //private Autos auto;
 
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -72,6 +83,7 @@ public class RobotContainer {
   public RobotContainer() {
     configureBindings();
     configureNamedCommands();
+    
 
     autoChooser = new LoggedDashboardChooser<>("AutoChooser", AutoBuilder.buildAutoChooser());
     //auto = new Autos();
@@ -106,6 +118,7 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
 
+      
       try{
       // Load the path you want to follow using its name in the GUI
       PathPlannerPath path = PathPlannerPath.fromPathFile("New Path");
@@ -116,7 +129,9 @@ public class RobotContainer {
       DriverStation.reportError("Big oops: " + e.getMessage(), e.getStackTrace());
       return Commands.none();
   }
+  
 
+    
     
     //return Commands.print("No autonomous command configured");
 
