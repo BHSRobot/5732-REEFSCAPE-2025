@@ -12,6 +12,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.events.EventTrigger;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -25,15 +26,15 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.subsystems.Intake.Intake;
-import com.pathplanner.lib.events.EventTrigger;
+
+
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.math.geometry.Translation2d;
 
 //import frc.robot.commands.AimWithLimelight;
 //import frc.robot.Commands.Autos;
 //import frc.robot.commands.ScoringPositions;
-
+import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Swerve.SwerveSubsystem;
 import frc.robot.utils.Constants.OIConstants;
 import frc.robot.utils.Constants.DriveConstants;
